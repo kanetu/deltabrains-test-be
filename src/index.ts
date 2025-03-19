@@ -10,6 +10,13 @@ import sequelize from "./config/sequelize";
   } catch (error) {
     logger.error("[database]: Unable to connect to the database:", error);
   }
+
+  try {
+    await sequelize.sync();
+    logger.info(`[database]: All models were synchronized successfully.`);
+  } catch (error) {
+    logger.error("[database]: Database synchronizes fail:", error);
+  }
 })();
 
 // listen to requests

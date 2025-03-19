@@ -7,7 +7,12 @@ import { NextFunction, Request, Response } from "express";
  * Error handler. Send stacktrace only during development
  * @public
  */
-export const handler = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const response = {
     code: err.status,
     message: err.message,
@@ -15,7 +20,7 @@ export const handler = (err: any, req: Request, res: Response, next: NextFunctio
     stack: err.stack,
   };
 
-  if (env !== 'development') {
+  if (env !== "development") {
     delete response.stack;
   }
 
@@ -27,7 +32,12 @@ export const handler = (err: any, req: Request, res: Response, next: NextFunctio
  * If error is not an instanceOf APIError, convert it.
  * @public
  */
-export const converter = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const converter = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   let convertedError = err;
 
   if (!(err instanceof APIError)) {
@@ -38,7 +48,7 @@ export const converter = (err: any, req: Request, res: Response, next: NextFunct
     });
   }
 
-  return handler(convertedError, req, res, next);
+  return errorHandler(convertedError, req, res, next);
 };
 
 /**
@@ -47,8 +57,8 @@ export const converter = (err: any, req: Request, res: Response, next: NextFunct
  */
 export const notFound = (req: Request, res: Response, next: NextFunction) => {
   const err = new APIError({
-    message: 'Not found',
+    message: "Not found",
     status: httpStatus.NOT_FOUND,
   });
-  return handler(err, req, res, next);
+  return errorHandler(err, req, res, next);
 };

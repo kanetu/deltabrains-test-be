@@ -13,7 +13,6 @@ const validateEventMiddleware = async (
     next();
   } catch (error) {
     if (error instanceof ValidationError) {
-      console.error("Validation failed: ", error);
       res.json({
         status: "Validate Error",
         error: error.errors.map((e) => e.message),

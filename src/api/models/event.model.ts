@@ -1,14 +1,13 @@
-import { Model } from "sequelize";
+import { Model, UUIDV4, DataTypes, Sequelize } from "sequelize";
 import sequelize from "../../config/sequelize";
 
-const { Sequelize, DataTypes } = require("sequelize");
 class Event extends Model {}
 
 Event.init(
   {
     id: {
       type: DataTypes.UUID,
-      defaultValue: Sequelize.UUID.V4,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     title: {
@@ -44,7 +43,7 @@ Event.init(
       },
     },
     maxPerson: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         min: 1,

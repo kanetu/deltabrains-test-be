@@ -1,16 +1,30 @@
-// import { NextFunction, Request, Response } from "express";
-// import Event from "../models/event.model";
+import { NextFunction, Request, Response } from "express";
+import Event from "../models/event.model";
+import httpStatus from "http-status";
+import { responseHandler } from "../middlewares/response";
 
-// exports.create = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const event = req.body;
-//     const savedUser = await user.save();
-//     res.status(httpStatus.CREATED);
-//     res.json(savedUser.transform());
-//   } catch (error) {
-//     next(User.checkDuplicateEmail(error));
-//   }
-// };
+const create = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const event = await Event.create({
+      title: req.body.title,
+      content: req.body.content,
+      venue: req.body.venue,
+      date: new Date(req.body.date),
+      maxPerson: req.body.maxPerson,
+    });
+    responseHandler(
+      res,
+      httpStatus.CREATED,
+      true,
+      "Create event successfully",
+      event
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { create };
 
 // /**
 //  * Replace existing user
