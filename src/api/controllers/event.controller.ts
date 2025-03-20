@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import Event from "../models/event.model";
 import httpStatus from "http-status";
 import { responseHandler } from "../middlewares/response";
+import { Op } from "sequelize";
 
-const create = async (req: Request, res: Response, next: NextFunction) => {
+const createEvent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const event = await Event.create({
       title: req.body.title,
@@ -24,64 +25,107 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { create };
+const getAllEvent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { page = 1, limit = 10, search = "" } = req.query;
+    const pageNumber = Number(page);
+    const pageSize = Number(limit);
+    const offset = (pageNumber - 1) * pageSize;
 
-// /**
-//  * Replace existing user
-//  * @public
-//  */
-// exports.replace = async (req, res, next) => {
-//   try {
-//     const { user } = req.locals;
-//     const newUser = new User(req.body);
-//     const ommitRole = user.role !== 'admin' ? 'role' : '';
-//     const newUserObject = omit(newUser.toObject(), '_id', ommitRole);
+    const { rows: events, count: total } = await Event.findAndCountAll({
+      where: { ...(search ? { title: { [Op.like]: `%${search}%` } } : {}) },
+      limit: pageSize,
+      offset: offset,
+      order: [["date", "ASC"]],
+    });
 
-//     await user.updateOne(newUserObject, { override: true, upsert: true });
-//     const savedUser = await User.findById(user._id);
+    responseHandler(res, httpStatus.OK, true, "Get events successfully", {
+      events,
+      pagination: {
+        total,
+        page: pageNumber,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-//     res.json(savedUser.transform());
-//   } catch (error) {
-//     next(User.checkDuplicateEmail(error));
-//   }
-// };
+const getEventById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const event = await Event.findByPk(id);
+    responseHandler(res, httpStatus.OK, true, "Get event successfully", event);
+  } catch (error) {
+    next(error);
+  }
+};
 
-// /**
-//  * Update existing user
-//  * @public
-//  */
-// exports.update = (req, res, next) => {
-//   const ommitRole = req.locals.user.role !== 'admin' ? 'role' : '';
-//   const updatedUser = omit(req.body, ommitRole);
-//   const user = Object.assign(req.locals.user, updatedUser);
+const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-//   user.save()
-//     .then((savedUser) => res.json(savedUser.transform()))
-//     .catch((e) => next(User.checkDuplicateEmail(e)));
-// };
+    const event = await Event.findOne({ where: { id } });
+    if (!event) {
+      responseHandler(
+        res,
+        httpStatus.NOT_FOUND,
+        false,
+        `No Event with id: ${id}`
+      );
+      return;
+    }
 
-// /**
-//  * Get user list
-//  * @public
-//  */
-// exports.list = async (req, res, next) => {
-//   try {
-//     const users = await User.list(req.query);
-//     const transformedUsers = users.map((user) => user.transform());
-//     res.json(transformedUsers);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    const { title, content, venue, date, maxPerson } = req.body;
 
-// /**
-//  * Delete user
-//  * @public
-//  */
-// exports.remove = (req, res, next) => {
-//   const { user } = req.locals;
+    await Event.update(
+      {
+        ...(title ? { title } : {}),
+        ...(content ? { content } : {}),
+        ...(venue ? { venue } : {}),
+        ...(date ? { date: new Date(date) } : {}),
+        ...(maxPerson ? { maxPerson } : {}),
+      },
+      {
+        where: { id },
+      }
+    );
 
-//   user.remove()
-//     .then(() => res.status(httpStatus.NO_CONTENT).end())
-//     .catch((e) => next(e));
-// };
+    const updatedEvent = await Event.findByPk(id);
+
+    responseHandler(
+      res,
+      httpStatus.OK,
+      true,
+      "Update event successfully",
+      updatedEvent
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    await Event.destroy({ where: { id } });
+    responseHandler(res, httpStatus.OK, true, "Delete event successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  getAllEvent,
+  getEventById,
+};

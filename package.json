@@ -25,7 +25,8 @@
     "morgan": "~1.9.1",
     "mysql2": "^3.13.0",
     "sequelize": "^6.37.6",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",

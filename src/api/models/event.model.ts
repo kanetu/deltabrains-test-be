@@ -1,4 +1,4 @@
-import { Model, UUIDV4, DataTypes, Sequelize } from "sequelize";
+import { Model, DataTypes } from "sequelize";
 import sequelize from "../../config/sequelize";
 
 class Event extends Model {}
@@ -53,7 +53,7 @@ Event.init(
   },
   {
     sequelize,
-    modelName: "event", // We need to choose the model name
+    modelName: "event",
   }
 );
 
