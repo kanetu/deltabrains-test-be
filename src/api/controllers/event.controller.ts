@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { responseHandler } from "../middlewares/response";
 import { Op } from "sequelize";
-import { Event } from "../models/association";
+import { Attendee, Event } from "../models/association";
 
 const createEvent = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -71,7 +71,7 @@ const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
-    const event = await Event.findOne({ where: { id } });
+    const event = await Event.findByPk(id);
     if (!event) {
       responseHandler(
         res,
@@ -83,6 +83,23 @@ const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const { title, content, venue, date, maxPerson } = req.body;
+
+    const totalAttendee = await Attendee.count({
+      include: {
+        model: Event,
+        where: { id },
+      },
+    });
+
+    if (totalAttendee > maxPerson) {
+      responseHandler(
+        res,
+        httpStatus.BAD_REQUEST,
+        false,
+        `Can not update for this event since total attendee currently exceeds the current max person`
+      );
+      return;
+    }
 
     await Event.update(
       {

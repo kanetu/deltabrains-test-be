@@ -66,7 +66,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       },
     });
 
-    if (totalAttendee >= event.dataValues.maxPerson) {
+    if (totalAttendee > event.dataValues.maxPerson) {
       await t.rollback();
       responseHandler(
         res,
@@ -77,12 +77,13 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
+    await t.commit();
+
     await AttendeeEvent.create({
       attendeeId: attendee.dataValues.id,
       eventId: event?.dataValues.id,
     });
 
-    await t.commit();
     responseHandler(
       res,
       httpStatus.CREATED,
@@ -91,6 +92,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       attendee
     );
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
