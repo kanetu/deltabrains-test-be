@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import APIError from "../errors/api-error";
 import { env } from "../../config/vars";
 import { NextFunction, Request, Response } from "express";
+import logger from "../../config/logger";
 
 /**
  * Error handler. Send stacktrace only during development
@@ -19,6 +20,8 @@ export const errorHandler = (
     errors: err.errors,
     stack: err.stack,
   };
+
+  logger.error(`[API Error] ${JSON.stringify(response)}`);
 
   if (env !== "development") {
     delete response.stack;

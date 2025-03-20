@@ -61,6 +61,15 @@ const getEventById = async (
   try {
     const { id } = req.params;
     const event = await Event.findByPk(id);
+    if (!event) {
+      responseHandler(
+        res,
+        httpStatus.NOT_FOUND,
+        false,
+        `No Event with id: ${id}`
+      );
+      return;
+    }
     responseHandler(res, httpStatus.OK, true, "Get event successfully", event);
   } catch (error) {
     next(error);
