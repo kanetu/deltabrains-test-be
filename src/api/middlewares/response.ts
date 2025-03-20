@@ -7,5 +7,7 @@ export const responseHandler = (
   message: string,
   data: any = null
 ) => {
-  return res.status(status).json({ success, message, data });
+  return res
+    .status(status)
+    .json({ success, message, ...(data ? { data } : {}) });
 };

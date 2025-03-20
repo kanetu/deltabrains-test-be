@@ -1,52 +1,43 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../../config/sequelize";
 
-const Event = sequelize.define("event", {
+const Attendee = sequelize.define("attendee", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  title: {
+  fullName: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
       len: [1, 100],
     },
   },
-  content: {
-    type: DataTypes.STRING,
+  gender: {
+    type: DataTypes.ENUM("Anh", "Chi"),
     allowNull: false,
     validate: {
       len: [1, 500],
     },
   },
-  venue: {
+  email: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
     validate: {
-      len: [1, 200],
+      isEmail: true,
     },
   },
-  date: {
-    type: DataTypes.DATE,
+
+  phoneNumber: {
+    type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
     validate: {
-      customValidator(value: string) {
-        if (new Date(value) < new Date()) {
-          throw new Error("The date must be before today");
-        }
-      },
-    },
-  },
-  maxPerson: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    validate: {
-      min: 1,
-      max: 100,
+      is: /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/,
     },
   },
 });
 
-export { Event };
+export { Attendee };

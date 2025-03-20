@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import Event from "../models/event.model";
 import httpStatus from "http-status";
 import { responseHandler } from "../middlewares/response";
 import { Op } from "sequelize";
+import { Event } from "../models/association";
 
 const createEvent = async (req: Request, res: Response, next: NextFunction) => {
   try {
