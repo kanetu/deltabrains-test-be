@@ -63,6 +63,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       include: {
         model: Event,
         where: { id: eventId },
+        attributes: [],
       },
     });
 
@@ -80,8 +81,8 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     await t.commit();
 
     await AttendeeEvent.create({
-      attendeeId: attendee.dataValues.id,
-      eventId: event?.dataValues.id,
+      AttendeeId: attendee.dataValues.id,
+      EventId: event.dataValues.id,
     });
 
     responseHandler(

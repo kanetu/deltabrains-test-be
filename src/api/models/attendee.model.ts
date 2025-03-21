@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../../config/sequelize";
 
-const Attendee = sequelize.define("attendee", {
+const Attendee = sequelize.define("Attendee", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,

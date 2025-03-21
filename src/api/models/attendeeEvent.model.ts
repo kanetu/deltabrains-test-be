@@ -1,5 +1,5 @@
 import sequelize from "../../config/sequelize";
 
-const AttendeeEvent = sequelize.define("attendeeEvent", {});
+const AttendeeEvent = sequelize.define("AttendeeEvent", {});
 
 export { AttendeeEvent };

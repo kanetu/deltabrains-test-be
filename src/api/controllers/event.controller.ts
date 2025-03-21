@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { responseHandler } from "../middlewares/response";
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import { Attendee, Event } from "../models/association";
 
 const createEvent = async (req: Request, res: Response, next: NextFunction) => {
@@ -27,16 +27,35 @@ const createEvent = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllEvent = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { page = 1, limit = 10, search = "" } = req.query;
+    const { page = 0, limit = 10, search = "" } = req.query;
     const pageNumber = Number(page);
     const pageSize = Number(limit);
-    const offset = (pageNumber - 1) * pageSize;
+    const offset = pageNumber * pageSize;
 
     const { rows: events, count: total } = await Event.findAndCountAll({
       where: { ...(search ? { title: { [Op.like]: `%${search}%` } } : {}) },
       limit: pageSize,
       offset: offset,
       order: [["date", "ASC"]],
+      include: [
+        {
+          model: Attendee,
+          attributes: [],
+          through: { attributes: [] },
+          required: false,
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            Sequelize.literal(
+              `(SELECT COUNT(*) FROM \`AttendeeEvents\` WHERE \`AttendeeEvents\`.\`eventId\` = \`Event\`.\`id\`)`
+            ),
+            "attendeeCount",
+          ],
+        ],
+      },
+      distinct: true,
     });
 
     responseHandler(res, httpStatus.OK, true, "Get events successfully", {
