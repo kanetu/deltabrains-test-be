@@ -36,7 +36,10 @@ const getAllEvent = async (req: Request, res: Response, next: NextFunction) => {
       where: { ...(search ? { title: { [Op.like]: `%${search}%` } } : {}) },
       limit: pageSize,
       offset: offset,
-      order: [["date", "ASC"]],
+      order: [
+        ["date", "DESC"],
+        ["updatedAt", "DESC"],
+      ],
       include: [
         {
           model: Attendee,
