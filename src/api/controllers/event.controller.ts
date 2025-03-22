@@ -79,7 +79,26 @@ const getEventById = async (
 ) => {
   try {
     const { id } = req.params;
-    const event = await Event.findByPk(id);
+    const event = await Event.findByPk(id, {
+      include: [
+        {
+          model: Attendee,
+          attributes: [],
+          through: { attributes: [] },
+          required: false,
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            Sequelize.literal(
+              `(SELECT COUNT(*) FROM \`AttendeeEvents\` WHERE \`AttendeeEvents\`.\`eventId\` = \`Event\`.\`id\`)`
+            ),
+            "attendeeCount",
+          ],
+        ],
+      },
+    });
     if (!event) {
       responseHandler(
         res,
