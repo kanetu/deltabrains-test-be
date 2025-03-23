@@ -12,19 +12,6 @@ This is the backend service for the DeltaBrains Test project. It is a RESTful AP
 - **Logging**: Winston
 - **API Documentation**: Swagger
 
-## Installation
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-repo/backend.git
-   cd backend
-   ```
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Create a `.env` file with the required environment variables (e.g., database connection, port, etc.).
-
 ## Usage
 
 ### Development Mode
