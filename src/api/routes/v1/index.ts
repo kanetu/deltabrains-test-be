@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 
+import docsRoutes from "./docs.route";
 import eventRoutes from "./event.route";
 
 const router = express.Router();
@@ -14,7 +15,7 @@ router.get("/status", (req: Request, res: Response, next: NextFunction) => {
 /**
  * GET v1/docs
  */
-router.use("/docs", express.static("docs"));
+router.use("/docs", docsRoutes);
 
 router.use("/events", eventRoutes);
 

@@ -18,7 +18,7 @@ const createEvent = async (req: Request, res: Response, next: NextFunction) => {
       res,
       httpStatus.CREATED,
       true,
-      "Create event successfully",
+      "Tạo sự kiện thành công",
       event
     );
   } catch (error) {
@@ -62,7 +62,7 @@ const getAllEvent = async (req: Request, res: Response, next: NextFunction) => {
       distinct: true,
     });
 
-    responseHandler(res, httpStatus.OK, true, "Get events successfully", {
+    responseHandler(res, httpStatus.OK, true, "Truy vấn sự kiện thành công", {
       events,
       pagination: {
         total,
@@ -108,11 +108,17 @@ const getEventById = async (
         res,
         httpStatus.NOT_FOUND,
         false,
-        `No Event with id: ${id}`
+        `Không tồn tại sự kiện với id: ${id}`
       );
       return;
     }
-    responseHandler(res, httpStatus.OK, true, "Get event successfully", event);
+    responseHandler(
+      res,
+      httpStatus.OK,
+      true,
+      "Truy vấn sự kiện thành công",
+      event
+    );
   } catch (error) {
     next(error);
   }
@@ -128,7 +134,7 @@ const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
         res,
         httpStatus.NOT_FOUND,
         false,
-        `No Event with id: ${id}`
+        `Không tồn tại sự kiện với id: ${id}`
       );
       return;
     }
@@ -147,7 +153,7 @@ const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
         res,
         httpStatus.BAD_REQUEST,
         false,
-        `Can not update for this event since total attendee currently exceeds the current max person`
+        `Không thể thay đổi số lượng người tối đa ít hơn tổng số người tham gia hiện tại`
       );
       return;
     }
@@ -171,7 +177,7 @@ const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
       res,
       httpStatus.OK,
       true,
-      "Update event successfully",
+      "Cập nhật sự kiện thành công",
       updatedEvent
     );
   } catch (error) {
@@ -184,7 +190,7 @@ const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     await Event.destroy({ where: { id } });
-    responseHandler(res, httpStatus.OK, true, "Delete event successfully");
+    responseHandler(res, httpStatus.OK, true, "Xóa sự kiện thành công");
   } catch (error) {
     next(error);
   }
@@ -206,7 +212,7 @@ const registerEvent = async (
         res,
         httpStatus.BAD_REQUEST,
         false,
-        `Email is registered: ${email}`
+        `Email đã được đăng ký: ${email}`
       );
       return;
     }
@@ -220,7 +226,7 @@ const registerEvent = async (
         res,
         httpStatus.BAD_REQUEST,
         false,
-        `Phone number is registered: ${phoneNumber}`
+        `Số điện thoại đã được đăng ký: ${phoneNumber}`
       );
       return;
     }
@@ -244,7 +250,7 @@ const registerEvent = async (
         res,
         httpStatus.BAD_REQUEST,
         false,
-        `No Event with id: ${id}`
+        `Không tồn tại sự vợi với id: ${id}`
       );
       return;
     }
@@ -257,13 +263,13 @@ const registerEvent = async (
       },
     });
 
-    if (totalAttendee > event.dataValues.maxPerson) {
+    if (totalAttendee >= event.dataValues.maxPerson) {
       await t.rollback();
       responseHandler(
         res,
         httpStatus.BAD_REQUEST,
         false,
-        `This Event is full ${totalAttendee}/${event.dataValues.maxPerson}`
+        `Sự kiện đã đủ người tham gia ${totalAttendee}/${event.dataValues.maxPerson}`
       );
       return;
     }
@@ -279,7 +285,7 @@ const registerEvent = async (
       res,
       httpStatus.CREATED,
       true,
-      "Register successfully",
+      "Đăng ký sự kiện thành công",
       attendee
     );
   } catch (error) {

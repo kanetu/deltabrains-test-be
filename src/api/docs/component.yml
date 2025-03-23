@@ -1,0 +1,93 @@
+components:
+  schemas:
+    Event:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        venue:
+          type: string
+        date:
+          type: string
+          format: date
+        maxPerson:
+          type: number
+      example:
+        title: fake title
+        content: fake content
+        venue: fake location
+        date: 3/22/2025
+        maxPerson: 10
+
+    Attendee:
+      type: object
+      properties:
+        fullName:
+          type: string
+        gender:
+          type: string
+          enum: ["Anh", "Chị"]
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+      example:
+        fullName: Fake fullName
+        gender: Anh
+        email: fakeemail@gmail.com
+        phoneNumber: "0336098045"
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+
+  responses:
+    DuplicateEmail:
+      description: Email already taken
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 400
+            message: Email already taken
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 401
+            message: Please authenticate
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 403
+            message: Forbidden
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 404
+            message: Not found
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -100,7 +100,7 @@ const validateGetAllEventsMiddleware = async (
   }
 };
 
-export const registerEventSchema = z.object({
+export const attendeeSchema = z.object({
   fullName: z.string().min(1).max(20).nonempty(),
   gender: z.enum(["Anh", "Chi"]),
   email: z.string().email().nonempty(),
@@ -119,7 +119,7 @@ const validateRegisterEventMiddleware = (
   next: NextFunction
 ) => {
   try {
-    registerEventSchema.parse(req.body);
+    attendeeSchema.parse(req.body);
     next();
   } catch (error) {
     if (error instanceof ZodError) {
