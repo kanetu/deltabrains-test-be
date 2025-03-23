@@ -15,7 +15,7 @@ const Attendee = sequelize.define("Attendee", {
     },
   },
   gender: {
-    type: DataTypes.ENUM("Anh", "Chi"),
+    type: DataTypes.ENUM("Anh", "Chị"),
     allowNull: false,
     validate: {
       len: [1, 500],
@@ -24,7 +24,6 @@ const Attendee = sequelize.define("Attendee", {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
     validate: {
       isEmail: true,
     },
@@ -33,7 +32,6 @@ const Attendee = sequelize.define("Attendee", {
   phoneNumber: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
     validate: {
       is: /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/,
     },

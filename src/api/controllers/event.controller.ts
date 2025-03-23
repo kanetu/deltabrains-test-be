@@ -205,32 +205,6 @@ const registerEvent = async (
     const { fullName, gender, email, phoneNumber } = req.body;
     const { id } = req.params;
 
-    const emailExisted = await Attendee.findOne({ where: { email } });
-
-    if (emailExisted?.dataValues) {
-      responseHandler(
-        res,
-        httpStatus.BAD_REQUEST,
-        false,
-        `Email đã được đăng ký: ${email}`
-      );
-      return;
-    }
-
-    const phoneNumberExisted = await Attendee.findOne({
-      where: { phoneNumber },
-    });
-
-    if (phoneNumberExisted?.dataValues) {
-      responseHandler(
-        res,
-        httpStatus.BAD_REQUEST,
-        false,
-        `Số điện thoại đã được đăng ký: ${phoneNumber}`
-      );
-      return;
-    }
-
     const t = await sequelize.transaction();
 
     const attendee = await Attendee.create(

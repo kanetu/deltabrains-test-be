@@ -102,7 +102,7 @@ const validateGetAllEventsMiddleware = async (
 
 export const attendeeSchema = z.object({
   fullName: z.string().min(1).max(20).nonempty(),
-  gender: z.enum(["Anh", "Chi"]),
+  gender: z.enum(["Anh", "Chị"]),
   email: z.string().email().nonempty(),
   phoneNumber: z
     .string()
